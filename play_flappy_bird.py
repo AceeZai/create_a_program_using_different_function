@@ -152,4 +152,88 @@ def main_game(movement_info):
         pygame.display.update()
         fps_clock.tick(fps)
         
+        def show_game_over_screen(crash_info):
+    ""Wait for input then return to main loop to restart"""
+    score = crash_info['score']
+    
+    # High Score Logic
+    high_score = 0
+    try:
+        if os.path.exists('highscore.txt'):
+            with open('highscore.txt', 'r') as f:
+                high_score = int(f.read()
+    except: pass
+
+    if score > high_score:
+        high_score = score
+        with open('highscore.txt', 'w') as f:
+            f.write(str(high_score))
+
+    sounds['hit'].play()
+    if not crash_info['groundCrash']: sounds['die'].play()
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+                pygame.quit(); sys.exit()
+            if event.type == KEYDOWN or ev3nt.type == MOUSEBUTTONDOWN:
+                
+screen.blit(images['background'], (0, 0))
+        # Keep showing pipes and base so it looks natural
+        for u, l in zip(crash_info['upperPipes'], crash_info['lowerPipes']):
+            screen.blit(images['pipe'][0], (u['x'], u['y']))
+            screen.blit(images['pipe'][1], (l['x'], l['y']))
+        screen.blit(images['base'], (crash_info['basex'], base_y))
+        
+        # Show Game Over and Score
+        screen.blit(images['gameover'], (50, 180))
+        show_score(score)
+        
+        pygame.display.update()
+        fps_clock.tick(fps)
+
+# --- Helper Functions ---
+def get_random_pipe():
+    gap_y = random.randrange(0, int(base_y * 0.6 - pipe_gap_size)) + int(base_y * 0.2)
+    pipe_h = images['pipe'][0].get_height()
+    return [{'x': screen_width + 10, 'y': gap_y - pipe_h},
+            {'x': screen_width + 10, 'y': gap_y + pipe_gap_size}]
+
+def show_score(score):
+    digits = [int(x) for x in str(score)]
+    w = sum(images['numbers'][d].get_width() for d in digits)
+    offset = (screen_width - w) / 2
+    for d in digits:
+        screen.blit(images['numbers'][d], (offset, screen_height * 0.1))
+        offset += images['numbers'][d].get_width()
+
+def check_crash(player, upper_pipes, lower_pipes):
+    if player['y'] + images['player'][0].get_height() >= base_y - 1: return [True, True]
+    p_rect = pygame.Rect(player['x'], player['y'], images['player'][0].get_width(), images['player'][0].get_height())
+    for u, l in zip(upper_pipes, lower_pipes):
+        u_rect = pygame.Rect(u['x'], u['y'], images['pipe'][0].get_width(), images['pipe'][0].get_height())
+        l_rect = pygame.Rect(l['x'], l['y'], images['pipe'][0].get_width(), images['pipe'][0].get_height())
+        if pixel_collision(p_rect, u_rect, hitmasks['player'][player['index']], hitmasks['pipe'][0]) or \
+           pixel_collision(p_rect, l_rect, hitmasks['player'][player['index']], hitmasks['pipe'][1]):
+            return [True, False]
+    return [False, False]
+
+def pixel_collision(r1, r2, m1, m2):
+    clip = r1.clip(r2)
+    if not clip.width or not clip.height: return False
+    for x in range(clip.width):
+        for y in range(clip.height):
+            if m1[clip.x - r1.x + x][clip.y - r1.y + y] and m2[clip.x - r2.x + x][clip.y - r2.y + y]: return True
+    return False
+
+def get_hitmask(img):
+    return [[bool(img.get_at((x, y))[3]) for y in range(img.get_height())] for x in range(img.get_width())]
+
+def player_shm(data):
+    if abs(data['val']) >= 8: data['dir'] *= -1
+    data['val'] += data['dir']
+
+if __name__ == '__main__':
+    main()
+                
     
