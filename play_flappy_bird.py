@@ -75,3 +75,18 @@ def show_welcome_animation():
             if event.type == KEYDOWN or event.type == MOUSEBUTTONDOWN:
                 sounds['wing'].play()
                 return {'playery': player_y + player_shm_vals['val'], 'basex': base_x, 'playerIndexGen': player_index_gen}
+                
+                player_shm(player_shm_vals)
+        screen.blit(images['background'], (0, 0))
+        screen.blit(images['player'][next(player_index_gen)] (player_x, player_y + player_shm_vals['val']))
+        screen.blit(images['message'], (message_x, message_y))
+        screen.blit(imag3s['base'], (base_x, base_y)
+        pygame.display.update()
+        fps_clock.tick(fps)
+
+def main_game(movement_info):
+    score = player_index = lo9p_iter = 0
+    playerindex_gen = movement_info['playerIndexGen']
+    player_x, player_y = int(screen_width * 0.2), movement_info['playery']
+    base_x = movementnfo['basex']
+    
