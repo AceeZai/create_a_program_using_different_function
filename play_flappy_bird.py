@@ -80,7 +80,7 @@ def show_welcome_animation():
         screen.blit(images['background'], (0, 0))
         screen.blit(images['player'][next(player_index_gen)], (player_x, player_y + player_shm_vals['val']))
         screen.blit(images['message'], (message_x, message_y))
-        screen.blit(images['base'], (base_x, base_y)
+        screen.blit(images['base'], (base_x, base_y))
         pygame.display.update()
         fps_clock.tick(fps)
 
@@ -89,4 +89,62 @@ def main_game(movement_info):
     player_index_gen = movement_info['playerIndexGen']
     player_x, player_y = int(screen_width * 0.2), movement_info['playery']
     base_x = movement_info['basex']
+    
+    new_p1 = get_random_pipe()
+    new_p2 = get_random_pipe()
+    upper_pipes = [{'x': screen_width + 200, 'y': new_p1[0]['y']},
+                   {'x': screen_width + 200 + (screen_width / 2), 'y': new_p2[0]['y']}]
+    lower_pipes = [{'x': screen_width + 200, 'y': new_p1[1]['y']},
+                   {'x': screen_width + 200 + (screen_width / 2), 'y': new_p2[1]['y']}]
+
+    pipe_vel_x, player_vel_y, player_acc_y, player_flap_acc = -4, -9, 1, -9
+    player_rot, player_flapped = 45, False
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == QUIT: pygame.quit(); sys.exit()
+            if event.type == KEYDOWN or event.type == MOUSEBUTTONDOWN:
+                if player_y > -2 * images['player'][0].get_height():
+                    player_vel_y, player_flapped, player_rot = player_flap_acc, True, 45
+                    sounds['wing'].play()
+
+        crash_test = check_crash({'x': player_x, 'y': player_y, 'index': player_index}, upper_pipes, lower_pipes)
+        if crash_test[0]:
+            return {'y': player_y, 'groundCrash': crash_test[1], 'basex': base_x, 'upperPipes': upper_pipes, 'lowerPipes': lower_pipes, 'score': score, 'playerVelY': player_vel_y, 'playerRot': player_rot}
+
+        # Scoring
+        player_mid = player_x + images['player'][0].get_width() / 2
+        for pipe in upper_pipes:
+            pipe_mid = pipe['x'] + images['pipe'][0].get_width() / 2
+            if pipe_mid <= player_mid < pipe_mid + 4:
+                score += 1; sounds['point'].play()
+
+        if (loop_iter + 1) % 3 == 0: player_index = next(player_index_gen)
+        loop_iter = (loop_iter + 1) % 30
+        if player_rot > -90: player_rot -= 3
+        if player_vel_y < 10 and not player_flapped: player_vel_y += player_acc_y
+        player_flapped = False
+        player_y += min(player_vel_y, base_y - player_y - images['player'][0].get_height())
+
+        for u, l in zip(upper_pipes, lower_pipes):
+            u['x'] += pipe_vel_x; l['x'] += pipe_vel_x
+        
+        if 0 < upper_pipes[0]['x'] < 5:
+            new_p = get_random_pipe()
+            upper_pipes.append(new_p[0]); lower_pipes.append(new_p[1])
+        if upper_pipes[0]['x'] < -images['pipe'][0].get_width():
+            upper_pipes.pop(0); lower_pipes.pop(0)
+
+        screen.blit(images['background'], (0, 0))
+        for u, l in zip(upper_pipes, lower_pipes):
+            screen.blit(images['pipe'][0], (u['x'], u['y']))
+            screen.blit(images['pipe'][1], (l['x'], l['y']))
+        screen.blit(images['base'], (base_x, base_y))
+        show_score(score)
+        visible_rot = player_rot if player_rot <= 20 else 20
+        player_surface = pygame.transform.rotate(images['player'][player_index], visible_rot)
+        screen.blit(player_surface, (player_x, player_y))
+        pygame.display.update()
+        fps_clock.tick(fps)
+        
     
