@@ -38,4 +38,9 @@ original_name = input("Enter your name in different casing styles: ")
 reverse_casing = ''.join([c.lower() if c.isupper() else c.upper() for c in full_name])
 print(reverse_casing)
 
-
+#Program #7 
+#Count the number of words
+input_words = input("Enter a sentence: ")
+#len function couns the number of elements 
+word_count = len(statement.split())
+print(word_count)
