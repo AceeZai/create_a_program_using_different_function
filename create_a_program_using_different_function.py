@@ -1,131 +1,76 @@
-create_a_program_that_do_the_same_functionality_without_using_common_functions.py
-#rstrip()
-user_text = input("Enter text: ")
-last_index = len(user_text) - 1
-#Use while loop
-while last_index >= 0 and user_text[last_index] == " ":
-    last_index -= 1
-#identify the variables and within the given index 
-trimmed_text = user_text[:last_index + 1]
-print(trimmed_text)
-#done
+# Prog01: rstrip()
+text_input = input("Enter text: ")
+index_pos = len(text_input) - 1
+while index_pos >= 0 and text_input[index_pos] == " ":
+    index_pos -= 1
+print(f"Result: '{text_input[:index_pos + 1]}'")
 
-#removesuffix()
-user_text = input("Enter text: ")
-suffix_text = input("Enter suffix: ")
-#Use len() function
-suffix_len = len(suffix_text)
-#if else loop
-if user_text[-suffix_len:] == suffix_text:
-    result_text = user_text[:-suffix_len]
-else:
-    result_text = user_text
+# Prog02: removesuffix()
+text_input = input("Enter text: ")
+suffix_input = input("Enter suffix: ")
+suffix_size = len(suffix_input)
+print(f"Result: {text_input[:-suffix_size] if text_input[-suffix_size:] == suffix_input else text_input}")
 
-print(result_text)
-#done
+# Prog03: upper()
+text_input = input("Enter text: ")
+upper_output = ""
+for char_item in text_input:
+    ascii_val = ord(char_item)
+    upper_output += chr(ascii_val - 32) if 97 <= ascii_val <= 122 else char_item
+print(f"Result: {upper_output}")
 
-#upper()
-user_text = input("Enter text: ")
-upper_text = ""
-#ascii code stores value or digits for every character
-for char_item in user_text:
-    ascii_code = ord(char_item)
-#Use True or False for executing 
-    if 97 <= ascii_code <= 122:
-        upper_text += chr(ascii_code - 32)
-    else:
-        upper_text += char_item
-
-print(upper_text)
-#done
-
-#lower()
-user_text = input("Enter text: ")
-all_lower = True
-#Use ascii 
-for char_item in user_text:
-    ascii_code = ord(char_item) #Checks corresponding digits
-#False loop
-    if 65 <= ascii_code <= 90:
-        all_lower = False
-#done 
-
-#startswith()
-user_text = input("Enter text: ")
-prefix_text = input("Enter prefix: ")
-#Add loop
-prefix_match = True
-
-if len(prefix_text) > len(user_text):
-    prefix_match = False
-else:
-    for index_pos in range(len(prefix_text)):
-        if user_text[index_pos] != prefix_text[index_pos]:
-            prefix_match = False
-            break
-#done
-
-#rjust()
-user_text = input("Enter text: ")
-total_width = int(input("Enter width: "))
-
-space_count = total_width - len(user_text)
-
-if space_count > 0:
-    right_text = " " * space_count + user_text
-else:
-    right_text = user_text
-
-print(right_text)
-#done
-
-#zfill() without using zfill()
-num_text = input("Enter number text: ")
-total_width = int(input("Enter width: "))
-
-zero_count = total_width - len(num_text)
-
-if zero_count > 0:
-    filled_num = "0" * zero_count + num_text
-else:
-    filled_num = num_text
-
-print(filled_num)
-#done
-
-#count
-user_text = input("Enter text: ")
-search_char = input("Enter character: ")
-
-char_total = 0
-#Set condition
-for char_item in user_text:
-    if char_item == search_char:
-        char_total += 1
-#done
-
-#index() without using index()
-user_text = input("Enter text: ")
-search_char = input("Enter character: ")
-
-found_index = -1
-
-for index_pos in range(len(user_text)):
-    if user_text[index_pos] == search_char:
-        found_index = index_pos
+# Prog04: islower()
+text_input = input("Enter text: ")
+all_lower_check = True
+for char_item in text_input:
+    if 65 <= ord(char_item) <= 90:
+        all_lower_check = False
         break
-#done
+print(f"Result: {all_lower_check}")
 
-#rindex()
-user_text = input("Enter text: ")
-search_char = input("Enter character: ")
+# Prog05: startswith()
+text_input = input("Enter text: ")
+prefix_input = input("Enter prefix: ")
+match_found = text_input[:len(prefix_input)] == prefix_input
+print(f"Result: {match_found}")
 
-found_index = -1
+# Prog06: rjust()
+text_input = input("Enter text: ")
+width_input = int(input("Enter width: "))
+padding_size = width_input - len(text_input)
+print(f"Result: '{(' ' * padding_size) + text_input if padding_size > 0 else text_input}'")
 
-for index_pos in range(len(user_text) - 1, -1, -1):
-    if user_text[index_pos] == search_char:
-        found_index = index_pos
+# Prog07: zfill()
+text_input = input("Enter text: ")
+width_input = int(input("Enter width: "))
+padding_size = width_input - len(text_input)
+print(f"Result: {('0' * padding_size) + text_input if padding_size > 0 else text_input}")
+
+# Prog08: count()
+text_input = input("Enter text: ")
+char_target = input("Enter char: ")
+total_count = 0
+for char_item in text_input:
+    if char_item == char_target:
+        total_count += 1
+print(f"Result: {total_count}")
+
+# Prog09: index()
+text_input = input("Enter text: ")
+char_target = input("Enter char: ")
+found_at = -1
+for current_pos in range(len(text_input)):
+    if text_input[current_pos] == char_target:
+        found_at = current_pos
         break
+print(f"Result: {found_at}")
 
-print(found_index)
-#done
+# Prog10: rindex()
+text_input = input("Enter text: ")
+char_target = input("Enter char: ")
+last_at = -1
+for current_pos in range(len(text_input) - 1, -1, -1):
+    if text_input[current_pos] == char_target:
+        last_at = current_pos
+        break
+print(f"Result: {last_at}")
